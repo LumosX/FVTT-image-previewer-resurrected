@@ -1,59 +1,103 @@
-class ImagePreviewer extends Application {
-    
-    static get defaultOptions() {
-        this.imageUrl = '';
-        const options = super.defaultOptions;
-        options.template = "modules/image-previewer/template.html";
-        options.width = 200;
-        options.height = 200;
-        options.classes = ['image-previewer'];
-        return options;
+// The previewer is now a reusable single element that can get injected into the file picker
+class ImagePreviewer {
+    #element = null;
+    #image = null;
+    #url = null;
+
+    // "Singleton" instantiation
+    getInstance() {
+        if (this.#element)
+            return this.#element;
+
+        this.#image = document.createElement("img");
+
+        this.#image.addEventListener("load", () => {
+            const aspectRatio = this.#image.naturalWidth / this.#image.naturalHeight;
+            this.#image.style.setProperty("--aspectRatio", aspectRatio);
+        });
+
+        this.#image.addEventListener("error", () => this.hoverOff());
+
+        this.#element = document.createElement("div");
+        this.#element.classList.add("image-previewer");
+        this.#element.append(this.#image);
+        document.body.append(this.#element);
+
+        return this.#element;
     }
 
-    getData() {
-        return { preview: this.imageUrl}
-    }
+    showPreview(imageUrl, rowElement) {
+        const previewer = this.getInstance();
 
-    showPreview(imageUrl, previewPos) {
-        this.imageUrl = imageUrl;
-        this._render(true);
-        this.position.top = previewPos.y;
-        this.position.left = previewPos.x;
-        // this.shortTimeout;  used to close preview when unhover
-        // this.longTimeout;   used to close preview after 2 seconds
+        if (this.#url !== imageUrl) {
+            this.#url = imageUrl;
+            this.#image.src = imageUrl;
+        }
 
-        // prevent shortTimeout to close the preview since another previewable item was hovered
-        if (this.shortTimeout !== undefined) clearTimeout(this.shortTimeout)
-
-        // start a new longTimeout to close the preview after too long idle time
-        if (this.longTimeout !== undefined)  clearTimeout(this.longTimeout);
-        this.longTimeout = window.setTimeout(() => { this.close(); }, 2000);
+        const anchorClass = "image-previewer-anchor";
+        document.querySelector(`.${anchorClass}`)?.classList.remove(anchorClass);
+        rowElement.classList.add(anchorClass);
+        previewer.classList.add("active");
     }
 
     hoverOff() {
-        // closing the current preview after a short grace period
-        this.shortTimeout = window.setTimeout(() => {
-            this.close();
-        }, 100);
+        this.#element?.classList.remove("active");
+    }
+
+    moveToEnd() {
+        if (this.#element)
+            document.body.append(this.#element);
     }
 }
 
-Hooks.on('renderFilePicker', (app, html, data) => {
-    let imagePreviewer = new ImagePreviewer();
-    html.find('.file').hover(ev => {
-        // get new position for the previewer
-        let elementBox = ev.target.getBoundingClientRect()
-        let previewPos = {
-            x: elementBox.x + elementBox.width,
-            y: elementBox.y
+const previewer = new ImagePreviewer();
+
+function initialiseImagePreviewer(root) {
+    // Ensure the previewer is always at the bottom of the DOM so all anchors can be found
+    previewer.moveToEnd();
+
+    root.addEventListener("mouseover", event => {
+        const file = event.target.closest?.("li.file[data-path]");
+
+        if (!file)
+            return;
+
+        const path = file.dataset.path;
+
+        if (!foundry.helpers.media.ImageHelper.hasImageExtension(path)) {
+            previewer.hoverOff();
+
+            return;
         }
-        // get the proper image path
-        let path = ev.target.dataset.path;
-        let fileExtension = path.split('.')[path.split('.').length - 1].toLowerCase();
-        if (CONST.IMAGE_FILE_EXTENSIONS.includes(fileExtension)) {
-            imagePreviewer.showPreview(path, previewPos);
-        }
-    }, ev => {
-        imagePreviewer.hoverOff();
+
+        previewer.showPreview(path, file);
     });
+
+    root.addEventListener("mouseout", event => {
+        const file = event.target.closest?.("li.file[data-path]");
+
+        if (!file || (event.relatedTarget && file.contains(event.relatedTarget)))
+            return;
+
+        previewer.hoverOff();
+    });
+
+    console.log("Image Previewer Resurrected | Initialised");
+}
+
+Hooks.once("init", () => console.log("Image Previewer Resurrected | Initialising..."));
+
+// ApplicationV2 uses HTMLElement objects instead of jquery html
+Hooks.on("renderFilePicker", (_, element) => {
+    if (!(element instanceof HTMLElement))
+        return;
+
+    if (element.dataset.imagePreviewer === "active")
+        return;
+
+    element.dataset.imagePreviewer = "active";
+
+    initialiseImagePreviewer(element);
 });
+
+Hooks.on("closeFilePicker", () => previewer.hoverOff());
