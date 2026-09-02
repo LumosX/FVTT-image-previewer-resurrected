@@ -1,21 +1,37 @@
+.image-previewer-anchor {
+    anchor-name: --image-previewer-row;
+}
+
 .image-previewer {
-    background:none;
-    box-shadow:none;
+    background: none;
+    box-shadow: none;
+
+    /* These CSS anchors are pretty neat */
+    position: fixed;
+    position-anchor: --image-previewer-row;
+    position-area: span-block-end inline-end;
+    position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block;
+    position-visibility: anchors-visible;
+    margin-inline-start: 8px;
+    width: max-content;
+    pointer-events: none;
+
+    z-index: var(--z-index-tooltip);
+    opacity: 0;
+    transition: opacity 140ms ease-out;
 }
 
-.image-previewer header {
-    display:none;
-    
-}
-
-.image-previewer .window-content {
-    background:none;
-    overflow:hidden;
+.image-previewer.active {
+    opacity: 1;
 }
 
 .image-previewer img{
-    border:none;
-    object-fit:contain;
-    width:200px;
-    height:200px;
+    border: none;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 60%));
+
+    /* Need to jump through some hoops to get this bound inside 200xp AND upscaling small ones regardless of aspect ratio */
+    --aspectRatio: 1;
+    width: min(200px, calc(200px * var(--aspectRatio)));
+    height: auto;
 }
