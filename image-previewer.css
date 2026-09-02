@@ -27,6 +27,7 @@
 .image-previewer img{
     border: none;
     object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 60%));
 
     /* Need to jump through some hoops to get this bound inside 200xp AND upscaling small ones regardless of aspect ratio */
     --aspectRatio: 1;
