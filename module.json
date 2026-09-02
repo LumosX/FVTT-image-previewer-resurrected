@@ -17,10 +17,9 @@
     "esmodules": ["image-previewer.js"],
     "styles": ["image-previewer.css"],
     "url": "https://github.com/LumosX/FVTT-image-previewer-resurrected",
-    "manifest": "TODO",
-    "download": "TODO",
     "compatibility": {
         "minimum": "13",
         "verified": "14"
-    }
+    },
+    "license": "http://creativecommons.org/licenses/by/4.0/"
 }
