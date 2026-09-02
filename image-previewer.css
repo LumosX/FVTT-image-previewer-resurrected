@@ -18,6 +18,7 @@
 
     z-index: var(--z-index-tooltip);
     opacity: 0;
+    transition: opacity 140ms ease-out;
 }
 
 .image-previewer.active {
