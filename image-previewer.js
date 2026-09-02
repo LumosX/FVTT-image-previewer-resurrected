@@ -3,6 +3,7 @@ class ImagePreviewer {
     #element = null;
     #image = null;
     #url = null;
+    #hideTimeout = null;
 
     // "Singleton" instantiation
     getInstance() {
@@ -16,7 +17,7 @@ class ImagePreviewer {
             this.#image.style.setProperty("--aspectRatio", aspectRatio);
         });
 
-        this.#image.addEventListener("error", () => this.hoverOff());
+        this.#image.addEventListener("error", () => this.hidePreview(true));
 
         this.#element = document.createElement("div");
         this.#element.classList.add("image-previewer");
@@ -27,6 +28,7 @@ class ImagePreviewer {
     }
 
     showPreview(imageUrl, rowElement) {
+        this.#cancelHide();
         const previewer = this.getInstance();
 
         if (this.#url !== imageUrl) {
@@ -40,8 +42,31 @@ class ImagePreviewer {
         previewer.classList.add("active");
     }
 
-    hoverOff() {
-        this.#element?.classList.remove("active");
+    hidePreview(instantHide = false) {
+        if (instantHide) {
+            this.#cancelHide();
+            this.#element?.classList.remove("active");
+
+            return;
+        }
+
+        if (this.#hideTimeout !== null)
+            return;
+
+        const timeoutDelayMs = 100; // the same timeout as the original module
+
+        this.#hideTimeout = window.setTimeout(() => {
+            this.#hideTimeout = null;
+            this.#element?.classList.remove("active");
+        }, timeoutDelayMs);
+    }
+
+    #cancelHide() {
+        if (this.#hideTimeout === null)
+            return;
+
+        window.clearTimeout(this.#hideTimeout);
+        this.#hideTimeout = null;
     }
 
     moveToEnd() {
@@ -65,7 +90,7 @@ function initialiseImagePreviewer(root) {
         const path = file.dataset.path;
 
         if (!foundry.helpers.media.ImageHelper.hasImageExtension(path)) {
-            previewer.hoverOff();
+            previewer.hidePreview(true);
 
             return;
         }
@@ -79,7 +104,7 @@ function initialiseImagePreviewer(root) {
         if (!file || (event.relatedTarget && file.contains(event.relatedTarget)))
             return;
 
-        previewer.hoverOff();
+        previewer.hidePreview();
     });
 
     console.log("Image Previewer Resurrected | Initialised");
@@ -100,4 +125,4 @@ Hooks.on("renderFilePicker", (_, element) => {
     initialiseImagePreviewer(element);
 });
 
-Hooks.on("closeFilePicker", () => previewer.hoverOff());
+Hooks.on("closeFilePicker", () => previewer.hidePreview(true));
