@@ -1,17 +1,18 @@
 # Image Previewer Resurrected
 
-FoundryVTT module app to preview images on hover in the file picker menu.
+FoundryVTT module to preview images on hover in the file picker menu.
 
-Forked from syl3r86's original [image-previewer](https://github.com/syl3r86/image-previewer) module, which is unusable in v13. This is too useful to not have, so after suffering yet again, I decided to rewrite it.
+Forked from syl3r86's original [image-previewer](https://github.com/syl3r86/image-previewer) module, which became unusable in v13. This is too useful to not have, so after experiencing yet another bout of suffering from its absence, I decided to rewrite it.
 
 **Tested and works** on Foundry **v13 and v14**.
 
 ## Installation
-1. Copy this link and use it in Foundrys Module Manager to install the Module
+1. Copy this link and use it in Foundry's Module Manager to install the module.
 
-    > TODO after I create a release
+> TODO after I create a release
 
-2. Enable the Module in your world's Module Settings.
+2. Enable the module in your world's Module Management.
+
 
 ![example](preview.jpg)
 
