@@ -1,15 +1,26 @@
 {
-    "name": "image-previewer",
+    "id": "image-previewer",
     "title": "Image Previewer",
-    "description": "A little app to preview images on hover in the file picker menu.",
-    "version": "0.7",
-    "author": "Felix#6196",
-    "scripts": ["./image-previewer.js"],
-    "styles": ["./image-previewer.css"],
-    "packs": [],
-    "url": "https://github.com/syl3r86/image-previewer",
-    "manifest": "https://raw.githubusercontent.com/syl3r86/image-previewer/master/module.json",
-    "download": "https://github.com/syl3r86/image-previewer/archive/master.zip",
-    "minimumCoreVersion": "0.5.5",
-    "compatibleCoreVersion": "0.5.5"
+    "description": "A module to preview images on hover in the file picker menu.",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Lumos @ Zero Vector",
+            "url": "https://github.com/LumosX",
+        },
+        {
+            "name": "Felix Müller",
+            "url": "https://github.com/syl3r86",
+            "discord": "Felix#6196"
+        }
+    ],
+    "esmodules": ["image-previewer.js"],
+    "styles": ["image-previewer.css"],
+    "url": "https://github.com/LumosX/FVTT-image-previewer-resurrected",
+    "manifest": "TODO",
+    "download": "TODO",
+    "compatibility": {
+        "minimum": "13",
+        "verified": "14"
+    },
 }
