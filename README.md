@@ -9,7 +9,7 @@ Forked from syl3r86's original [image-previewer](https://github.com/syl3r86/imag
 ## Installation
 1. Copy this link and use it in Foundry's Module Manager to install the module.
 
-> TODO after I create a release
+    > `https://github.com/LumosX/FVTT-image-previewer-resurrected/releases/latest/download/module.json`
 
 2. Enable the module in your world's Module Management.
 
